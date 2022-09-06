@@ -118,5 +118,6 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   }
 
   void horn() {
+    SystemSound.play(SystemSoundType.alert);
   }
 }
