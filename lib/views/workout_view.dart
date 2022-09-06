@@ -11,6 +11,7 @@ class WorkoutView extends WorkoutState {
   TextEditingController _numPeopleController = TextEditingController();
   TextEditingController _numGroupController = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  TextEditingController _waterBreakController = TextEditingController();
   final List<int> colorCodes = <int>[600, 500, 100];
 
   @override
@@ -21,6 +22,7 @@ class WorkoutView extends WorkoutState {
     _repeatController = TextEditingController(text: "1");
     _textController = TextEditingController(text: "Pushups1 \nSitups \nPooping your Pants");
     _numPeopleController = TextEditingController(text: "1");
+    _waterBreakController = TextEditingController(text: "1");
     _numGroupController = TextEditingController(text: "1");
   }
 
@@ -31,6 +33,7 @@ class WorkoutView extends WorkoutState {
     _repeatController.dispose();
     _textController.dispose();
     _numPeopleController.dispose();
+    _waterBreakController.dispose();
     _numGroupController.dispose();
     super.dispose();
   }
@@ -183,6 +186,18 @@ class WorkoutView extends WorkoutState {
              autofocus: true,
              controller: _numPeopleController,
            ),
+           TextField(
+             decoration: InputDecoration(
+               border: OutlineInputBorder(),
+               hintText: 'Enter Waterbreak Duration',
+             ),
+             keyboardType: TextInputType.number,
+             inputFormatters: <TextInputFormatter>[
+               FilteringTextInputFormatter.digitsOnly,
+             ],
+             autofocus: true,
+             controller: _waterBreakController,
+           ),
          ],
        ),
        actions: [
@@ -213,7 +228,8 @@ class WorkoutView extends WorkoutState {
              int.parse(_workController.text),
              int.parse(_restController.text),
              int.parse(_repeatController.text),
-             _textController.text.split("\n")),
+             _textController.text.split("\n"),
+             int.parse(_waterBreakController.text)),
            int.parse(_numPeopleController.text));
          Navigator.of(context).pop();
        },
@@ -255,7 +271,7 @@ class WorkoutView extends WorkoutState {
            TextField(
              decoration: InputDecoration(
                border: OutlineInputBorder(),
-               hintText: 'Enter number of sets',
+               hintText: 'Enter Number of Sets per Exercise',
              ),
              keyboardType: TextInputType.number,
              inputFormatters: <TextInputFormatter>[

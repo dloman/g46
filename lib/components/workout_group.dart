@@ -4,14 +4,17 @@ import 'exercise.dart';
 class WorkoutGroup{
   List<Exercise> mExercises = [];
   List<String> mExerciseNames = [];
+  int mWaterBreakTimeMilliseconds = 60000;
+  bool mIsWaterBreak = false;
 
-  WorkoutGroup(int workTimeMilliseconds, int restTimeMilliseconds, int numberOfSets, List<String> exercises) {
+  WorkoutGroup(int workTimeSeconds, int restTimeSeconds, int numberOfSets, List<String> exercises, int waterBreakTimeSeconds) {
       mExerciseNames = exercises;
+      mWaterBreakTimeMilliseconds = waterBreakTimeSeconds *1000;
 
       mExercises = [];
       for (var i = 0; i < numberOfSets; i++) {
         for (var j = 0; j < exercises.length; j++) {
-          mExercises.add(Exercise(1000*workTimeMilliseconds, 1000*restTimeMilliseconds));
+          mExercises.add(Exercise(1000*workTimeSeconds, 1000*restTimeSeconds, j));
         }
       }
   }
@@ -20,12 +23,16 @@ class WorkoutGroup{
 
   List<String> getDisplayText(int numberOfPeopleDoingWorkout) {
     List<String> text = [];
-    if (mExercises.length == 0 || mExerciseNames.length == 0)
-    {
+
+    if (mIsWaterBreak) {
+      return List<String>.filled(numberOfPeopleDoingWorkout, "Hydrate Bitches");
+    }
+
+    if (mExercises.length == 0 || mExerciseNames.length == 0) {
       return text;
     }
 
-    int startIndex = mExerciseNames.length - (mExercises.length % mExerciseNames.length);
+    int startIndex = mExercises.first.mStartIndex;
 
     for (var i = 0; i < numberOfPeopleDoingWorkout; i++) {
       text.add(mExerciseNames[(startIndex + i) % mExerciseNames.length]);
@@ -34,19 +41,31 @@ class WorkoutGroup{
   }
 
   int getTime(int stopwatchTimeElapsed) {
-    return mExercises.length == 0 ? 0 : mExercises.first.getTime(stopwatchTimeElapsed);
+    return mExercises.length == 0 ?
+        mWaterBreakTimeMilliseconds - stopwatchTimeElapsed :
+        mExercises.first.getTime(stopwatchTimeElapsed);
   }
 
   TextStyle getStyle(int stopwatchTimeElapsed) {
-    return mExercises.length == 0 ? TextStyle() : mExercises.first.getStyle(stopwatchTimeElapsed);
+    return mExercises.length == 0 ?
+       TextStyle(fontSize: 50, backgroundColor: Colors.blue) :
+       mExercises.first.getStyle(stopwatchTimeElapsed);
   }
 
-  void pop() {
+  void popExercise() {
+    if (mExercises.length == 0 && mIsWaterBreak) {
+      mIsWaterBreak = false;
+      return;
+    }
+
     mExercises.removeAt(0);
+    if (mExercises.length == 0) {
+      mIsWaterBreak = true;
+    }
   }
 
   bool isEmpty() {
-    return mExercises.length == 0;
+    return mExercises.length == 0 && !mIsWaterBreak;
   }
 }
 

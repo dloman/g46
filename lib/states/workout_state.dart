@@ -90,7 +90,7 @@ abstract class WorkoutState extends State<WorkoutScreen> {
       if (mCurrentTimeMilliseconds < 0) {
         horn();
 
-        mWorkoutGroups.first.pop();
+        mWorkoutGroups.first.popExercise();
         if (mWorkoutGroups.first.isEmpty())
         {
           mWorkoutGroups.removeAt(0);
