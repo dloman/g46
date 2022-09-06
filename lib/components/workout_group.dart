@@ -12,8 +12,8 @@ class WorkoutGroup{
       mWaterBreakTimeMilliseconds = waterBreakTimeSeconds *1000;
 
       mExercises = [];
-      for (var i = 0; i < numberOfSets; i++) {
-        for (var j = 0; j < exercises.length; j++) {
+      for (var j = 0; j < exercises.length; j++) {
+        for (var i = 0; i < numberOfSets; i++) {
           mExercises.add(Exercise(1000*workTimeSeconds, 1000*restTimeSeconds, j));
         }
       }
