@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TimeBlock{
+class Exercise{
   final int mWorkTimeMilliseconds;
   final int mRestTimeMilliseconds;
 
-  TimeBlock(this.mWorkTimeMilliseconds, this.mRestTimeMilliseconds);
+  Exercise(this.mWorkTimeMilliseconds, this.mRestTimeMilliseconds);
 
   int getTime(int stopwatchTimeElapsed) {
     int time = mWorkTimeMilliseconds - stopwatchTimeElapsed;

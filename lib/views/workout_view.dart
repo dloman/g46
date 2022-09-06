@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../states/workout_state.dart';
+import '../components/workout_group.dart';
 import '../colors.dart';
 
 class WorkoutView extends WorkoutState {
@@ -8,6 +9,7 @@ class WorkoutView extends WorkoutState {
   TextEditingController _restController = TextEditingController();
   TextEditingController _repeatController = TextEditingController();
   TextEditingController _numPeopleController = TextEditingController();
+  TextEditingController _numGroupController = TextEditingController();
   TextEditingController _textController = TextEditingController();
   final List<int> colorCodes = <int>[600, 500, 100];
 
@@ -19,6 +21,7 @@ class WorkoutView extends WorkoutState {
     _repeatController = TextEditingController(text: "1");
     _textController = TextEditingController(text: "Pushups1 \nSitups \nPooping your Pants");
     _numPeopleController = TextEditingController(text: "1");
+    _numGroupController = TextEditingController(text: "1");
   }
 
   @override
@@ -28,6 +31,7 @@ class WorkoutView extends WorkoutState {
     _repeatController.dispose();
     _textController.dispose();
     _numPeopleController.dispose();
+    _numGroupController.dispose();
     super.dispose();
   }
 
@@ -66,8 +70,6 @@ class WorkoutView extends WorkoutState {
 
    Center _GetPortrait() {
     List<String> items = getDisplayText();
-
-    print("!!!! " + items.join("\n"));
 
     return Center(
       child: Column(
@@ -132,26 +134,94 @@ class WorkoutView extends WorkoutState {
   }
 
    void _newWorkout(BuildContext context) {
+     stop();
      Widget cancelButton = TextButton(
        child: Text("Cancel"),
        onPressed:  () { Navigator.of(context).pop(); },
      );
      Widget continueButton = TextButton(
        child: Text("Continue"),
+       onPressed:  () async {
+           resetWorkout();
+           for (var i = 0; i < int.parse(_numGroupController.text); i++) {
+             await _newWorkoutGroup(context, i+1);
+           }
+           Navigator.of(context).pop();
+       },
+     );
+
+     // set up the workoutgroupDialog
+     AlertDialog alert = AlertDialog(
+       title: Text("Create Workout"),
+       content: Column(
+         crossAxisAlignment: CrossAxisAlignment.stretch,
+         //position
+         mainAxisSize: MainAxisSize.min,
+         // wrap content in flutter
+         children: <Widget>[
+           TextField(
+             decoration: InputDecoration(
+               border: OutlineInputBorder(),
+               hintText: 'Enter number of workout groups',
+             ),
+             keyboardType: TextInputType.number,
+             inputFormatters: <TextInputFormatter>[
+               FilteringTextInputFormatter.digitsOnly,
+             ],
+             autofocus: true,
+             controller: _numGroupController,
+           ),
+           TextField(
+             decoration: InputDecoration(
+               border: OutlineInputBorder(),
+               hintText: 'Enter number of People working out',
+             ),
+             keyboardType: TextInputType.number,
+             inputFormatters: <TextInputFormatter>[
+               FilteringTextInputFormatter.digitsOnly,
+             ],
+             autofocus: true,
+             controller: _numPeopleController,
+           ),
+         ],
+       ),
+       actions: [
+         cancelButton,
+         continueButton,
+       ],
+     );
+
+     // show the dialog
+     showDialog(
+       context: context,
+       builder: (BuildContext context) {
+         return alert;
+       },
+     );
+   }
+
+   Future<dynamic> _newWorkoutGroup(BuildContext context, int num) async {
+     Widget cancelButton = TextButton(
+       child: Text("Cancel"),
+       onPressed:  () { Navigator.of(context).pop(); },
+     );
+     Widget continueButton = TextButton(
+       child: Text("Add to workout"),
        onPressed:  () {
-         setWorkout(
-           int.parse(_workController.text),
-           int.parse(_restController.text),
-           int.parse(_repeatController.text),
-           _textController.text.split("\n"),
+         addToWorkout(
+           WorkoutGroup(
+             int.parse(_workController.text),
+             int.parse(_restController.text),
+             int.parse(_repeatController.text),
+             _textController.text.split("\n")),
            int.parse(_numPeopleController.text));
          Navigator.of(context).pop();
        },
      );
 
-     // set up the AlertDialog
+     // set up the workoutgroupDialog
      AlertDialog alert = AlertDialog(
-       title: Text("Create Workout"),
+       title: Text("Create Workout Group #" + num.toString()),
        content: Column(
          crossAxisAlignment: CrossAxisAlignment.stretch,
          //position
@@ -185,18 +255,6 @@ class WorkoutView extends WorkoutState {
            TextField(
              decoration: InputDecoration(
                border: OutlineInputBorder(),
-               hintText: 'Enter number of People working out',
-             ),
-             keyboardType: TextInputType.number,
-             inputFormatters: <TextInputFormatter>[
-               FilteringTextInputFormatter.digitsOnly,
-             ],
-             autofocus: true,
-             controller: _numPeopleController,
-           ),
-           TextField(
-             decoration: InputDecoration(
-               border: OutlineInputBorder(),
                hintText: 'Enter number of sets',
              ),
              keyboardType: TextInputType.number,
@@ -225,7 +283,7 @@ class WorkoutView extends WorkoutState {
      );
 
      // show the dialog
-     showDialog(
+     return showDialog(
        context: context,
        builder: (BuildContext context) {
          return alert;

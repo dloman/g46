@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../screens/workout_screen.dart';
-import '../components/exercise.dart';
+import '../components/workout_group.dart';
 
 abstract class WorkoutState extends State<WorkoutScreen> {
   @protected
@@ -19,9 +19,7 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   int mCurrentTimeMilliseconds = 0;
   TextStyle mCurrentStyle = TextStyle(fontWeight: FontWeight.bold);
 
-  List<TimeBlock> mExercises = [];
-  List<String> mExerciseNames = [];
-  int mTimeRemaining = 0;
+  List<WorkoutGroup> mWorkoutGroups = [];
 
   bool mIsRunning = false;
 
@@ -46,10 +44,11 @@ abstract class WorkoutState extends State<WorkoutScreen> {
 
   @protected
   void stop() {
+    mStopwatch.stop();
+    mRefreshTimer = null;
     setState(() {
       mIsRunning = false;
     });
-    mStopwatch.stop();
     HapticFeedback.selectionClick();
   }
 
@@ -65,33 +64,37 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   }
 
   @protected
-  void setWorkout(int workValueMilliseconds, int restValueMilliseconds, int numberOfSets, List<String> exercises, int numberOfPeopleDoingWorkout) {
+  void resetWorkout() {
+    setState(() {
+      mWorkoutGroups = [];
+    });
+  }
+
+  @protected
+  void addToWorkout(WorkoutGroup group, int numberOfPeopleDoingWorkout) {
     setState(() {
       mNumberOfPeopleDoingWorkout = numberOfPeopleDoingWorkout;
-      mExerciseNames = exercises;
-
-      mExercises = [];
-      for (var i = 0; i < numberOfSets; i++) {
-        for (var j = 0; j < exercises.length; j++) {
-          mExercises.add(TimeBlock(1000*workValueMilliseconds, 1000*restValueMilliseconds));
-        }
-      }
+      mWorkoutGroups.add(group);
     });
   }
 
   void _refreshTick(Timer time) {
-    if (mExercises.length == 0) {
+    if (mWorkoutGroups.length == 0) {
       return;
     }
 
     setState(() {
-      mCurrentTimeMilliseconds = mExercises.first.getTime(mStopwatch.elapsedMilliseconds);
-      mCurrentStyle = mExercises.first.getStyle(mStopwatch.elapsedMilliseconds);
+      mCurrentTimeMilliseconds = mWorkoutGroups.first.getTime(mStopwatch.elapsedMilliseconds);
+      mCurrentStyle = mWorkoutGroups.first.getStyle(mStopwatch.elapsedMilliseconds);
 
       if (mCurrentTimeMilliseconds < 0) {
         horn();
 
-        mExercises.removeAt(0);
+        mWorkoutGroups.first.pop();
+        if (mWorkoutGroups.first.isEmpty())
+        {
+          mWorkoutGroups.removeAt(0);
+        }
         reset();
       }
 
@@ -104,15 +107,8 @@ abstract class WorkoutState extends State<WorkoutScreen> {
 
   List<String> getDisplayText() {
     List<String> text = [];
-    if (mExercises.length == 0 || mExerciseNames.length == 0)
-    {
-      return text;
-    }
-
-    int startIndex = (mExercises.length % mExerciseNames.length);
-
-    for (var i = 0; i < mNumberOfPeopleDoingWorkout; i++) {
-      text.add(mExerciseNames[(startIndex + i) % mExerciseNames.length]);
+    if (mWorkoutGroups.length > 0) {
+      text = mWorkoutGroups.first.getDisplayText(mNumberOfPeopleDoingWorkout);
     }
     return text;
   }
