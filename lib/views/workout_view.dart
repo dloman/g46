@@ -60,9 +60,9 @@ class WorkoutView extends WorkoutState {
           Align(
             alignment: Alignment.bottomRight,
             child: FloatingActionButton(
-              onPressed: start,
+              onPressed: _toggleStartStop,
               heroTag: null,
-              child: const Icon(Icons.play_circle),
+              child: _getStartStopIcon(),
               tooltip: 'Play',
             ),
           ),
@@ -131,6 +131,7 @@ class WorkoutView extends WorkoutState {
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
             ),
+            _getNext(),
         ]
       )
     );
@@ -307,8 +308,38 @@ class WorkoutView extends WorkoutState {
      );
 }
   Color _getColor(int index) {
-    final List<Color> colors = [Colors.amber, Colors.blue, Colors.green, Colors.orange];
+    final List<Color> colors = [Colors.amber, Colors.blue, Colors.green, Colors.orange, Colors.lime, Colors.pink, Colors.cyan];
 
     return colors[index % colors.length];
   }
+
+  Container _getNext() {
+    var next = getNextExerciseName();
+
+    if (next != null) {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        height: 50,
+        color: Colors.grey,
+        child: Center(child: Text(next as String)),
+      );
+    }
+    return Container();
+  }
+
+  void _toggleStartStop() {
+    if (mIsRunning) {
+      stop();
+      return;
+    }
+    start();
+
+  }
+
+ Icon _getStartStopIcon() {
+   if (mIsRunning) {
+     return Icon(Icons.stop_circle);
+  }
+   return Icon(Icons.play_circle);
+ }
 }

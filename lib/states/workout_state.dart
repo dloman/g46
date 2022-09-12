@@ -6,8 +6,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+
+
 import '../screens/workout_screen.dart';
 import '../components/workout_group.dart';
+import '../components/horn.dart';
 
 abstract class WorkoutState extends State<WorkoutScreen> {
   @protected
@@ -44,9 +47,8 @@ abstract class WorkoutState extends State<WorkoutScreen> {
 
   @protected
   void stop() {
-    mStopwatch.stop();
-    mRefreshTimer = null;
     setState(() {
+      mStopwatch.stop();
       mIsRunning = false;
     });
     HapticFeedback.selectionClick();
@@ -102,6 +104,9 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   }
 
   String getDisplayTime() {
+    if (mCurrentTimeMilliseconds == 0 && mWorkoutGroups.length == 0) {
+      return "Create a workout to begin";
+    }
     return (mCurrentTimeMilliseconds ~/ 1000).toString();
   }
 
@@ -117,7 +122,11 @@ abstract class WorkoutState extends State<WorkoutScreen> {
     return mCurrentStyle;
   }
 
-  void horn() {
-    SystemSound.play(SystemSoundType.alert);
+
+  String? getNextExerciseName() {
+    if (mWorkoutGroups.length == 0) {
+      return null;
+    }
+    return mWorkoutGroups.first.getNextExerciseName(mNumberOfPeopleDoingWorkout);
   }
 }

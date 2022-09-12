@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'horn.dart';
 
 class Exercise{
   final int mWorkTimeMilliseconds;
   final int mRestTimeMilliseconds;
   final int mStartIndex;
+  bool mIsRest = false;
 
   Exercise(this.mWorkTimeMilliseconds, this.mRestTimeMilliseconds, this.mStartIndex);
 
@@ -12,6 +14,10 @@ class Exercise{
 
     if (time < 0)
     {
+      if (!mIsRest) {
+        horn();
+        mIsRest = true;
+      }
       time = mWorkTimeMilliseconds + mRestTimeMilliseconds - stopwatchTimeElapsed;
     }
     return time;

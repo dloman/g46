@@ -67,5 +67,13 @@ class WorkoutGroup{
   bool isEmpty() {
     return mExercises.length == 0 && !mIsWaterBreak;
   }
+
+  String getNextExerciseName(int numberOfPeopleDoingWorkout) {
+    if (mExercises.length < numberOfPeopleDoingWorkout + 1) {
+      return "Water Break";
+    }
+
+    return mExerciseNames[mExercises[numberOfPeopleDoingWorkout].mStartIndex];
+  }
 }
 
