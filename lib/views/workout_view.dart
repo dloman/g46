@@ -7,7 +7,8 @@ import '../colors.dart';
 class WorkoutView extends WorkoutState {
   TextEditingController _workController = TextEditingController();
   TextEditingController _restController = TextEditingController();
-  TextEditingController _repeatController = TextEditingController();
+  TextEditingController _repeatExerciseController = TextEditingController();
+  TextEditingController _repeatGroupController = TextEditingController();
   TextEditingController _numPeopleController = TextEditingController();
   TextEditingController _numGroupController = TextEditingController();
   TextEditingController _textController = TextEditingController();
@@ -19,7 +20,8 @@ class WorkoutView extends WorkoutState {
     super.initState();
     _workController = TextEditingController(text: "40");
     _restController = TextEditingController(text: "20");
-    _repeatController = TextEditingController(text: "1");
+    _repeatExerciseController = TextEditingController(text: "1");
+    _repeatGroupController = TextEditingController(text: "1");
     _textController = TextEditingController(text: "Pushups1 \nSitups \nPooping your Pants");
     _numPeopleController = TextEditingController(text: "1");
     _waterBreakController = TextEditingController(text: "1");
@@ -30,7 +32,8 @@ class WorkoutView extends WorkoutState {
   void dispose() {
     _workController.dispose();
     _restController.dispose();
-    _repeatController.dispose();
+    _repeatExerciseController.dispose();
+    _repeatGroupController.dispose();
     _textController.dispose();
     _numPeopleController.dispose();
     _waterBreakController.dispose();
@@ -228,7 +231,8 @@ class WorkoutView extends WorkoutState {
            WorkoutGroup(
              int.parse(_workController.text),
              int.parse(_restController.text),
-             int.parse(_repeatController.text),
+             int.parse(_repeatExerciseController.text),
+             int.parse(_repeatGroupController.text),
              _textController.text.split("\n"),
              int.parse(_waterBreakController.text)),
            int.parse(_numPeopleController.text));
@@ -279,7 +283,19 @@ class WorkoutView extends WorkoutState {
                FilteringTextInputFormatter.digitsOnly,
              ],
              autofocus: true,
-             controller: _repeatController,
+             controller: _repeatExerciseController,
+           ),
+           TextField(
+             decoration: InputDecoration(
+               border: OutlineInputBorder(),
+               hintText: 'Enter Number of Times to Repeat Group',
+             ),
+             keyboardType: TextInputType.number,
+             inputFormatters: <TextInputFormatter>[
+               FilteringTextInputFormatter.digitsOnly,
+             ],
+             autofocus: true,
+             controller: _repeatGroupController,
            ),
            TextField(
              decoration: InputDecoration(

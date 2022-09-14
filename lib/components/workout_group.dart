@@ -6,15 +6,35 @@ class WorkoutGroup{
   List<String> mExerciseNames = [];
   int mWaterBreakTimeMilliseconds = 60000;
   bool mIsWaterBreak = false;
+  int mWorkTimeMilliseconds = 60000;
+  int mRestTimeMilliseconds = 30000;
+  int mNumberOfSets = 1;
+  int mNumberOfTimesThrough = 1;
 
-  WorkoutGroup(int workTimeSeconds, int restTimeSeconds, int numberOfSets, List<String> exercises, int waterBreakTimeSeconds) {
+  WorkoutGroup(
+    int workTimeSeconds,
+    int restTimeSeconds,
+    int numberOfSets,
+    int numberOfTimesThrough,
+    List<String> exercises,
+    int waterBreakTimeSeconds) {
       mExerciseNames = exercises;
       mWaterBreakTimeMilliseconds = waterBreakTimeSeconds *1000;
+      mWorkTimeMilliseconds = workTimeSeconds * 1000;
+      mRestTimeMilliseconds = restTimeSeconds * 1000;
+      mNumberOfSets = numberOfSets;
+      mNumberOfTimesThrough = numberOfTimesThrough;
 
+      _fill_exercises();
+  }
+
+  void _fill_exercises() {
       mExercises = [];
-      for (var j = 0; j < exercises.length; j++) {
-        for (var i = 0; i < numberOfSets; i++) {
-          mExercises.add(Exercise(1000*workTimeSeconds, 1000*restTimeSeconds, j));
+      for (var k = 0; k < mNumberOfTimesThrough; k++) {
+        for (var j = 0; j < mExerciseNames.length; j++) {
+          for (var i = 0; i < mNumberOfSets; i++) {
+            mExercises.add(Exercise(mWorkTimeMilliseconds, mRestTimeMilliseconds, j));
+          }
         }
       }
   }
