@@ -11,8 +11,6 @@ class G46 extends StatelessWidget {
   Widget build(BuildContext context) {
 
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);

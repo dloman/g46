@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -68,6 +69,8 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   @protected
   void resetWorkout() {
     setState(() {
+      stop();
+      reset();
       mWorkoutGroups = [];
     });
   }
@@ -81,6 +84,7 @@ abstract class WorkoutState extends State<WorkoutScreen> {
   }
 
   void _refreshTick(Timer time) {
+    assert(mIsRunning == mStopwatch.isRunning);
     if (mWorkoutGroups.length == 0) {
       return;
     }
@@ -128,5 +132,13 @@ abstract class WorkoutState extends State<WorkoutScreen> {
       return null;
     }
     return mWorkoutGroups.first.getNextExerciseName(mNumberOfPeopleDoingWorkout);
+  }
+
+  void fromJson(Map<String, dynamic> json) {
+    resetWorkout();
+    mNumberOfPeopleDoingWorkout = json['numberOfPeopleDoingWorkout'];
+    mCurrentTimeMilliseconds = 0;
+    int waterBreakTimeSeconds = json['waterBreakTimeSeconds'];
+    mWorkoutGroups = List<WorkoutGroup>.from(json['workoutGroups'].map((json) => WorkoutGroup.fromJson(json, waterBreakTimeSeconds)));
   }
 }

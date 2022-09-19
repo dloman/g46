@@ -95,5 +95,15 @@ class WorkoutGroup{
 
     return mExerciseNames[mExercises[numberOfPeopleDoingWorkout].mStartIndex];
   }
+
+  factory WorkoutGroup.fromJson(Map<String, dynamic> json, int waterBreakTimeSeconds) {
+    return WorkoutGroup(
+      json['workTimeSeconds'] as int,
+      json['restTimeSeconds'] as int,
+      json['numberOfSets'] as int,
+      json['numberOfTimesThrough'] as int,
+      List<String>.from(json['exercises']),
+      waterBreakTimeSeconds);
+    }
 }
 

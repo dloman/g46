@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../states/workout_state.dart';
@@ -12,7 +13,9 @@ class WorkoutView extends WorkoutState {
   TextEditingController _numPeopleController = TextEditingController();
   TextEditingController _numGroupController = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  TextEditingController _jsonController = TextEditingController();
   TextEditingController _waterBreakController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
   final List<int> colorCodes = <int>[600, 500, 100];
 
   @override
@@ -56,8 +59,17 @@ class WorkoutView extends WorkoutState {
               alignment: Alignment.bottomLeft,
               child: FloatingActionButton(
                 onPressed: () { _newWorkout(context); },
+                child: const Icon(Icons.work),
+                tooltip: 'New Workout with Wizard',
+                heroTag: null,
+              ),),),
+          Padding(padding: EdgeInsets.only(left:91),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: FloatingActionButton(
+                onPressed: () { _newWorkoutFromJson(context); },
                 child: const Icon(Icons.fitness_center),
-                tooltip: 'New Workout',
+                tooltip: 'New Workout From Json',
                 heroTag: null,
               ),),),
           Align(
@@ -219,6 +231,57 @@ class WorkoutView extends WorkoutState {
      );
    }
 
+   void _newWorkoutFromJson(BuildContext context) {
+     stop();
+     Widget cancelButton = TextButton(
+       child: Text("Cancel"),
+       onPressed:  () { Navigator.of(context).pop(); },
+     );
+     Widget continueButton = TextButton(
+       child: Text("Continue"),
+       onPressed:  () {
+         fromJson(jsonDecode(_jsonController.text));
+         Navigator.of(context).pop();
+       },
+     );
+
+     // set up the workoutDialog
+     AlertDialog alert = AlertDialog(
+       title: Text("Create Workout From Json"),
+       content: Column(
+         crossAxisAlignment: CrossAxisAlignment.stretch,
+         //position
+         mainAxisSize: MainAxisSize.min,
+         // wrap content in flutter
+         children: <Widget>[
+           TextField(
+             decoration: InputDecoration(
+               border: OutlineInputBorder(),
+               hintText: 'Enter json',
+             ),
+             keyboardType: TextInputType.multiline,
+             scrollController: _scrollController,
+             maxLines: null,
+             autofocus: true,
+             controller: _jsonController,
+           ),
+         ],
+       ),
+       actions: [
+         cancelButton,
+         continueButton,
+       ],
+     );
+
+     // show the dialog
+     showDialog(
+       context: context,
+       builder: (BuildContext context) {
+         return alert;
+       },
+     );
+   }
+
    Future<dynamic> _newWorkoutGroup(BuildContext context, int num) async {
      Widget cancelButton = TextButton(
        child: Text("Cancel"),
@@ -303,6 +366,7 @@ class WorkoutView extends WorkoutState {
                hintText: 'Enter exercises',
              ),
              keyboardType: TextInputType.multiline,
+             scrollController: _scrollController,
              maxLines: null,
              autofocus: true,
              controller: _textController,
