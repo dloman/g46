@@ -291,7 +291,7 @@ class WorkoutView extends WorkoutState {
        child: Text("Add to workout"),
        onPressed:  () {
          addToWorkout(
-           WorkoutGroup(
+           WorkoutGroup.fromSame(
              int.parse(_workController.text),
              int.parse(_restController.text),
              int.parse(_repeatExerciseController.text),

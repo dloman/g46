@@ -6,26 +6,45 @@ class WorkoutGroup{
   List<String> mExerciseNames = [];
   int mWaterBreakTimeMilliseconds = 60000;
   bool mIsWaterBreak = false;
-  int mWorkTimeMilliseconds = 60000;
-  int mRestTimeMilliseconds = 30000;
+  List<int> mWorkTimeMilliseconds = [60000];
+  List<int> mRestTimeMilliseconds = [30000];
   int mNumberOfSets = 1;
   int mNumberOfTimesThrough = 1;
 
   WorkoutGroup(
+    List<int> workTimeSeconds,
+    List<int> restTimeSeconds,
+    int numberOfSets,
+    int numberOfTimesThrough,
+    List<String> exercises,
+    int waterBreakTimeSeconds) {
+      if ((workTimeSeconds.length != numberOfTimesThrough) && (restTimeSeconds.length != numberOfTimesThrough)) {
+        throw new FormatException("must be same length");
+      }
+      mExerciseNames = exercises;
+      mWaterBreakTimeMilliseconds = waterBreakTimeSeconds *1000;
+      mWorkTimeMilliseconds = workTimeSeconds.map((v) => v * 1000).toList();
+      mRestTimeMilliseconds = restTimeSeconds.map((v) => v * 1000).toList();
+      mNumberOfSets = numberOfSets;
+      mNumberOfTimesThrough = numberOfTimesThrough;
+
+      _fill_exercises();
+  }
+
+  factory WorkoutGroup.fromSame(
     int workTimeSeconds,
     int restTimeSeconds,
     int numberOfSets,
     int numberOfTimesThrough,
     List<String> exercises,
     int waterBreakTimeSeconds) {
-      mExerciseNames = exercises;
-      mWaterBreakTimeMilliseconds = waterBreakTimeSeconds *1000;
-      mWorkTimeMilliseconds = workTimeSeconds * 1000;
-      mRestTimeMilliseconds = restTimeSeconds * 1000;
-      mNumberOfSets = numberOfSets;
-      mNumberOfTimesThrough = numberOfTimesThrough;
-
-      _fill_exercises();
+    return WorkoutGroup(
+      List<int>.filled(numberOfTimesThrough, workTimeSeconds),
+      List<int>.filled(numberOfTimesThrough, restTimeSeconds),
+      numberOfSets,
+      numberOfTimesThrough,
+      exercises,
+      waterBreakTimeSeconds *1000);
   }
 
   void _fill_exercises() {
@@ -33,7 +52,7 @@ class WorkoutGroup{
       for (var k = 0; k < mNumberOfTimesThrough; k++) {
         for (var j = 0; j < mExerciseNames.length; j++) {
           for (var i = 0; i < mNumberOfSets; i++) {
-            mExercises.add(Exercise(mWorkTimeMilliseconds, mRestTimeMilliseconds, j));
+            mExercises.add(Exercise(mWorkTimeMilliseconds[k], mRestTimeMilliseconds[k], j));
           }
         }
       }
@@ -97,13 +116,24 @@ class WorkoutGroup{
   }
 
   factory WorkoutGroup.fromJson(Map<String, dynamic> json, int waterBreakTimeSeconds) {
-    return WorkoutGroup(
-      json['workTimeSeconds'] as int,
-      json['restTimeSeconds'] as int,
-      json['numberOfSets'] as int,
-      json['numberOfTimesThrough'] as int,
-      List<String>.from(json['exercises']),
-      waterBreakTimeSeconds);
+    try
+    {
+      return WorkoutGroup(
+        List<int>.from(json['workTimeSeconds']),
+        List<int>.from(json['restTimeSeconds']),
+        json['numberOfSets'] as int,
+        json['numberOfTimesThrough'] as int,
+        List<String>.from(json['exercises']),
+        waterBreakTimeSeconds);
+    } catch (e){
+      return WorkoutGroup.fromSame(
+        json['workTimeSeconds'] as int,
+        json['restTimeSeconds'] as int,
+        json['numberOfSets'] as int,
+        json['numberOfTimesThrough'] as int,
+        List<String>.from(json['exercises']),
+        waterBreakTimeSeconds);
     }
+  }
 }
 
