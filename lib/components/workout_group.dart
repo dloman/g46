@@ -18,7 +18,9 @@ class WorkoutGroup{
     int numberOfTimesThrough,
     List<String> exercises,
     int waterBreakTimeSeconds) {
-      if ((workTimeSeconds.length != numberOfTimesThrough) && (restTimeSeconds.length != numberOfTimesThrough)) {
+      if (
+        (workTimeSeconds.length != numberOfSets*numberOfTimesThrough) &&
+        (restTimeSeconds.length != numberOfSets*numberOfTimesThrough)) {
         throw new FormatException("must be same length");
       }
       mExerciseNames = exercises;
@@ -39,8 +41,8 @@ class WorkoutGroup{
     List<String> exercises,
     int waterBreakTimeSeconds) {
     return WorkoutGroup(
-      List<int>.filled(numberOfTimesThrough, workTimeSeconds),
-      List<int>.filled(numberOfTimesThrough, restTimeSeconds),
+      List<int>.filled(numberOfSets*numberOfTimesThrough, workTimeSeconds),
+      List<int>.filled(numberOfSets*numberOfTimesThrough, restTimeSeconds),
       numberOfSets,
       numberOfTimesThrough,
       exercises,
@@ -52,7 +54,7 @@ class WorkoutGroup{
       for (var k = 0; k < mNumberOfTimesThrough; k++) {
         for (var j = 0; j < mExerciseNames.length; j++) {
           for (var i = 0; i < mNumberOfSets; i++) {
-            mExercises.add(Exercise(mWorkTimeMilliseconds[k], mRestTimeMilliseconds[k], j));
+            mExercises.add(Exercise(mWorkTimeMilliseconds[i+k], mRestTimeMilliseconds[i+k], j));
           }
         }
       }
