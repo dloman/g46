@@ -139,9 +139,11 @@ class WorkoutView extends WorkoutState {
               itemCount: exercises.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  height: 50,
+                  height: 100,
                   color: _getColor(index),
-                  child: Center(child: Text('${exercises[index]}')),
+                  child: Center(child: Text(
+                      '${exercises[index]}',
+                      style: TextStyle(fontSize: 40)))
                 );
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -399,9 +401,11 @@ class WorkoutView extends WorkoutState {
     if (next != null) {
       return Container(
         padding: const EdgeInsets.all(8),
-        height: 50,
+        height: 100,
         color: Colors.grey,
-        child: Center(child: Text(next as String)),
+        child: Center(child: Text(
+            next as String,
+            style: TextStyle(fontSize: 45)))
       );
     }
     return Container();

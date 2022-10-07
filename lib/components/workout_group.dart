@@ -46,7 +46,7 @@ class WorkoutGroup{
       numberOfSets,
       numberOfTimesThrough,
       exercises,
-      waterBreakTimeSeconds *1000);
+      waterBreakTimeSeconds);
   }
 
   void _fill_exercises() {
